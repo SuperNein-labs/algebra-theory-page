@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Линейная алгебра — Экзамен</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+MathJax = {tex: {inlineMath: [['$', '$'], ['\\(', '\\)']], displayMath: [['$$', '$$'], ['\\[', '\\]']]}};
+</script>
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.7;
+    color: #2c3e50;
+    background: #f5f7fa;
+    margin: 0;
+    padding: 0;
+  }
+  .nav {
+    background: #1a1a2e;
+    padding: 0.8rem 1.5rem;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+  .nav-inner {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    align-items: center;
+  }
+  .nav a {
+    color: white;
+    text-decoration: none;
+    padding: 0.4rem 0.9rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .nav a:hover { background: rgba(255,255,255,0.15); }
+  .nav a.active { background: #3498db; font-weight: 600; }
+  .nav .home { margin-right: auto; font-weight: 600; }
+  .container { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
+  .page { display: none; }
+  .page.active { display: block; }
+  h1 { color: #1a1a2e; border-bottom: 3px solid #3498db; padding-bottom: 0.5rem; }
+  h2 { color: #2c3e50; margin-top: 2.5rem; border-left: 4px solid #3498db; padding-left: 0.8rem; }
+  h3 { color: #34495e; margin-top: 1.8rem; }
+  .ch1 h1 { border-color: #27ae60; }
+  .ch1 h2 { border-color: #27ae60; }
+  .ch2 h1 { border-color: #f39c12; }
+  .ch2 h2 { border-color: #f39c12; }
+  .ch3 h1 { border-color: #e67e22; }
+  .ch3 h2 { border-color: #e67e22; }
+  .ch4 h1 { border-color: #e74c3c; }
+  .ch4 h2 { border-color: #e74c3c; }
+  .callout {
+    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    margin: 1.2rem 0;
+    border-left: 5px solid;
+    background: white;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .callout-title {
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .callout.def { border-color: #9b59b6; background: #f9f5fc; }
+  .callout.def .callout-title { color: #6c3483; }
+  .callout.thm { border-color: #27ae60; background: #f1f8f4; }
+  .callout.thm .callout-title { color: #186a3b; }
+  .callout.note { border-color: #3498db; background: #eaf4fb; }
+  .callout.note .callout-title { color: #1b4f72; }
+  .callout .content { color: #2c3e50; }
+  .callout .content p, .callout .content ul, .callout .content ol { margin: 0.4rem 0; }
+  .subtitle { color: #7f8c8d; font-style: italic; margin-bottom: 2rem; }
+  .chapter-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .chapter-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border-left: 6px solid;
+    cursor: pointer;
+  }
+  .chapter-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+  }
+  .chapter-card.ch1 { border-color: #27ae60; }
+  .chapter-card.ch2 { border-color: #f39c12; }
+  .chapter-card.ch3 { border-color: #e67e22; }
+  .chapter-card.ch4 { border-color: #e74c3c; }
+  .chapter-card.ch-test { border-color: #8e44ad; }
+  .chapter-card.ch-hist { border-color: #34495e; }
+  .chapter-card h2 { margin: 0 0 0.5rem 0; font-size: 1.3rem; }
+  .chapter-card .emoji { font-size: 2rem; margin-bottom: 0.5rem; }
+  .chapter-card .meta { color: #7f8c8d; font-size: 0.9rem; margin-top: 0.5rem; }
+  .source {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem 1.5rem;
+    border-left: 4px solid #3498db;
+    margin-top: 2rem;
+  }
+  footer { text-align: center; color: #95a5a6; margin: 3rem 0 1rem; font-size: 0.9rem; }
+  
+  /* Test mode */
+  .test-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin: 1.5rem 0;
+    padding: 1.2rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .btn {
+    padding: 0.7rem 1.3rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: white;
+  }
+  .btn-primary { background: #3498db; }
+  .btn-primary:hover { background: #2980b9; }
+  .btn-success { background: #27ae60; }
+  .btn-success:hover { background: #229954; }
+  .btn-warning { background: #f39c12; }
+  .btn-warning:hover { background: #d68910; }
+  .btn-danger { background: #e74c3c; }
+  .btn-danger:hover { background: #c0392b; }
+  .btn-secondary { background: #95a5a6; }
+  .btn-secondary:hover { background: #7f8c8d; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ticket-info {
+    background: #eaf4fb;
+    border-left: 4px solid #3498db;
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+  }
+  .ticket-info.fixed {
+    background: #f1f8f4;
+    border-color: #27ae60;
+  }
+  .answer-hidden { display: none; }
+  .answer-visible { display: block; }
+  .ticket-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+  }
+  .badge-fixed { background: #27ae60; color: white; }
+  .badge-temp { background: #95a5a6; color: white; }
+  
+  /* History */
+  .history-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+  .history-item {
+    background: white;
+    border-radius: 10px;
+    padding: 1.2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    border-left: 4px solid #34495e;
+  }
+  .history-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .history-date { color: #7f8c8d; font-size: 0.9rem; }
+  .history-questions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+  }
+  .history-q {
+    background: #f5f7fa;
+    padding: 0.5rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+  }
+  .history-q .q-ch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-right: 0.4rem;
+  }
+  .empty-history {
+    text-align: center;
+    color: #95a5a6;
+    padding: 3rem;
+    font-style: italic;
+  }
+  
+  @media print {
+    .nav, .test-controls, .page-nav { display: none; }
+    .callout { break-inside: avoid; }
+    h2 { break-after: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="home" data-page="home">🏠 Главная</a>
+    <a data-page="chapter1">🟢 Задача 1</a>
+    <a data-page="chapter2">🟡 Задача 2</a>
+    <a data-page="chapter3">🟠 Задача 3</a>
+    <a data-page="chapter4">🔴 Задача 4</a>
+    <a data-page="test">🎲 Тест</a>
+    <a data-page="history">📜 История</a>
+  </div>
+</nav>
+
+<!-- HOME -->
+<section id="home" class="page active">
+  <div class="container">
+    <h1>📚 Теоретические вопросы к экзамену по линейной алгебре</h1>
+    <p class="subtitle">Полный набор формулировок определений и теорем по 4 тематическим блокам</p>
+
+    <div class="chapter-grid">
+      <a class="chapter-card ch1" data-page="chapter1">
+        <div class="emoji">🟢</div>
+        <h2>Задача 1</h2>
+        <p>Линейные и Евклидовы пространства</p>
+        <div class="meta">13 вопросов • Определения, базис, скалярное произведение</div>
+      </a>
+      <a class="chapter-card ch2" data-page="chapter2">
+        <div class="emoji">🟡</div>
+        <h2>Задача 2</h2>
+        <p>Отображения, ядро, образ, собственные вектора</p>
+        <div class="meta">12 вопросов • Линейные отображения, инъекции, биекции</div>
+      </a>
+      <a class="chapter-card ch3" data-page="chapter3">
+        <div class="emoji">🟠</div>
+        <h2>Задача 3</h2>
+        <p>Жорданова форма, многочлены, Квадратичные формы</p>
+        <div class="meta">15 вопросов • Спектральная теория, аннулирующие многочлены</div>
+      </a>
+      <a class="chapter-card ch4" data-page="chapter4">
+        <div class="emoji">🔴</div>
+        <h2>Задача 4</h2>
+        <p>Преобразования в евклидовом пространстве</p>
+        <div class="meta">12 вопросов • Ортогональные, сопряжённые, самосопряжённые</div>
+      </a>
+      <a class="chapter-card ch-test" data-page="test">
+        <div class="emoji">🎲</div>
+        <h2>Режим теста</h2>
+        <p>Случайный билет из 4 вопросов</p>
+        <div class="meta">Тренировка в формате экзамена</div>
+      </a>
+      <a class="chapter-card ch-hist" data-page="history">
+        <div class="emoji">📜</div>
+        <h2>История билетов</h2>
+        <p>Зафиксированные билеты</p>
+        <div class="meta">Повторение пройденного</div>
+      </a>
+    </div>
+
+    <div class="source">
+      <strong>📖 Источник:</strong> Бортаковский А.С., Пегачкова Е.А. «Типовые задачи по линейной алгебре. Часть 2», МАИ, 2017.
+    </div>
+
+    <footer>Подготовлено для подготовки к экзамену • 2026</footer>
+  </div>
+</section>
+
+<!-- CHAPTERS -->
+<section id="chapter1" class="page ch1"><div class="container" id="ch1-content"></div></section>
+<section id="chapter2" class="page ch2"><div class="container" id="ch2-content"></div></section>
+<section id="chapter3" class="page ch3"><div class="container" id="ch3-content"></div></section>
+<section id="chapter4" class="page ch4"><div class="container" id="ch4-content"></div></section>
+
+<!-- TEST -->
+<section id="test" class="page">
+  <div class="container">
+    <h1>🎲 Режим теста</h1>
+    <p class="subtitle">Случайный билет из 4 вопросов — по одному из каждой главы</p>
+    
+    <div class="test-controls">
+      <button class="btn btn-primary" id="btn-new">🎲 Новый билет</button>
+      <button class="btn btn-success" id="btn-fix">📌 Зафиксировать</button>
+      <button class="btn btn-warning" id="btn-toggle">👁️ Показать ответы</button>
+      <button class="btn btn-secondary" id="btn-shuffle">🔀 Перемешать вопросы</button>
+    </div>
+    
+    <div class="ticket-info" id="ticket-info">
+      Нажмите «Новый билет», чтобы сгенерировать первый билет.
+    </div>
+    
+    <div id="ticket-content"></div>
+    
+    <footer>Подготовлено для подготовки к экзамену • 2026</footer>
+  </div>
+</section>
+
+<!-- HISTORY -->
+<section id="history" class="page">
+  <div class="container">
+    <h1>📜 История билетов</h1>
+    <p class="subtitle">Зафиксированные билеты для повторения</p>
+    
+    <div class="test-controls">
+      <button class="btn btn-danger" id="btn-clear-history">🗑️ Очистить историю</button>
+    </div>
+    
+    <div id="history-list"></div>
+    
+    <footer>Подготовлено для подготовки к экзамену • 2026</footer>
+  </div>
+</section>
+
+<script>
+// ===== ДАННЫЕ ВОПРОСОВ =====
+const questions = {
+  ch1: {
+    title: "🟢 Задача 1. Линейные и Евклидовы пространства",
+    color: "#27ae60",
+    sections: [
+      {
+        title: "Линейные пространства и подпространства",
+        items: [
+          {num: 1, type: "def", title: "Определение размерности линейного пространства",
+           content: `Векторное пространство $V$ называется <b>$n$-мерным</b>, если в нем существует система из $n$ линейно независимых векторов, а любая система из большего количества векторов линейно зависима. Число $n$ называется <b>размерностью</b> (числом измерений) векторного пространства $V$ и обозначается $\\dim V$. Другими словами, размерность пространства – это <b>максимальное число линейно независимых векторов</b> этого пространства.`},
+          {num: 2, type: "def", title: "Определение подпространства векторного пространства",
+           content: `Непустое подмножество $L$ векторного пространства $V$ называется его <b>подпространством</b>, если:
+           <ol>
+             <li>$u + v \\in L \\quad \\forall u, v \\in L$ (подпространство <b>замкнуто по отношению к операции сложения</b>);</li>
+             <li>$\\lambda v \\in L \\quad \\forall v \\in L$ и любого числа $\\lambda$ (подпространство <b>замкнуто по отношению к операции умножения</b> вектора на число).</li>
+           </ol>`},
+          {num: 3, type: "def", title: "Определение базиса векторного пространства",
+           content: `<b>Базисом</b> $n$-мерного векторного пространства называется <b>упорядоченная совокупность $n$ линейно независимых векторов</b> (базисных векторов).`},
+          {num: 4, type: "thm", title: "Теорема о дополнении системы векторов до базиса",
+           content: `Всякую линейно независимую систему $k$ векторов $n$-мерного векторного пространства ($1 \\le k < n$) <b>можно дополнить до базиса</b> пространства.
+           <p><i>(Для евклидова пространства: В конечномерном евклидовом пространстве любую систему ортогональных (ортонормированных) векторов можно дополнить до ортогонального (ортонормированного) базиса).</i></p>`},
+          {num: 5, type: "def", title: "Определение линейной зависимости элементов векторного пространства",
+           content: `Система из $k$ векторов $v_1, v_2, \\dots, v_k$ называется <b>линейно зависимой</b>, если существуют такие числа $\\alpha_1, \\alpha_2, \\dots, \\alpha_k$, <b>не все равные нулю одновременно</b>, что справедливо равенство $\\alpha_1 v_1 + \\alpha_2 v_2 + \\dots + \\alpha_k v_k = o$, т.е. <b>линейная комбинация является нулевым вектором</b>.`},
+          {num: 6, type: "def", title: "Определение алгебраической суммы подпространств",
+           content: `<b>Алгебраической суммой</b> подпространств $L_1$ и $L_2$ называется множество векторов вида <b>$v_1 + v_2$</b>, где $v_1 \\in L_1$, $v_2 \\in L_2$.`},
+          {num: 7, type: "def", title: "Определение алгебраического дополнения",
+           content: `Алгебраическая сумма подпространств $L_1$ и $L_2$ векторного пространства $V$ называется <b>прямой суммой</b>, если <b>пересечение подпространств состоит из одного нулевого вектора</b>. Прямая сумма подпространств обозначается $L_1 \\oplus L_2$ и обладает следующим свойством: если $V = L_1 \\oplus L_2$, то для каждого вектора $v \\in V$ существует <b>единственное представление</b> в виде $v = v_1 + v_2$, где $v_1 \\in L_1$, $v_2 \\in L_2$. <i>(Подпространство $L_2$ в этом случае называется алгебраическим дополнением $L_1$)</i>.`},
+          {num: 8, type: "def", title: "Определение линейной оболочки подмножества векторного пространства",
+           content: `<b>Линейной оболочкой</b> подмножества векторного пространства называется множество <b>всех линейных комбинаций</b> этих векторов: $Lin(v_1, v_2, \\dots, v_k) = \\{ \\alpha_1 v_1 + \\dots + \\alpha_k v_k ; \\alpha_i \\in \\mathbb{R} \\}$.`}
+        ]
+      },
+      {
+        title: "Евклидовы пространства и метрика",
+        items: [
+          {num: 9, type: "def", title: "Определение ортогонального дополнения подпространства",
+           content: `<b>Ортогональным дополнением</b> непустого подмножества $M$ евклидова пространства $E$ называется множество векторов, <b>ортогональных каждому вектору из $M$</b>. Ортогональное дополнение обозначается $M^\\bot = \\{v : (v, w) = 0 \\ \\forall w \\in M\\}$.`},
+          {num: 10, type: "def", title: "Определение евклидова пространства",
+           content: `Вещественное векторное пространство $E$ называется <b>евклидовым</b>, если каждой паре элементов $u, v$ этого пространства поставлено в соответствие действительное число $(u, v)$, называемое <b>скалярным произведением</b>, причем это соответствие удовлетворяет следующим условиям (аксиомам):
+           <ol>
+             <li>$(u, v) = (v, u)$ (<b>коммутативность</b>);</li>
+             <li>$(u + v, w) = (u, w) + (v, w)$ (<b>аддитивность</b> по первому множителю);</li>
+             <li>$(\\lambda u, v) = \\lambda(u, v)$ (<b>однородность</b> по первому множителю);</li>
+             <li>$(v, v) > 0$ при $v \\neq o$, и $(o, o) = 0$ (<b>положительная определенность</b>).</li>
+           </ol>`},
+          {num: 11, type: "def", title: "Определение ортогонального базиса",
+           content: `Базис $e_1, \\dots, e_n$ евклидова пространства называется <b>ортогональным</b>, если все образующие его векторы <b>попарно ортогональны</b>, т.е. $(e_i, e_j) = 0$ при $i \\neq j$.`},
+          {num: 12, type: "def", title: "Определение ортонормированного базиса",
+           content: `Базис $e_1, \\dots, e_n$ евклидова пространства называется <b>ортонормированным</b>, если его векторы <b>попарно ортогональны</b> и <b>длина каждого из них равна единице</b>:
+           $$ (e_i, e_j) = \\begin{cases} 1, & i = j \\\\ 0, & i \\neq j \\end{cases} $$`},
+          {num: 13, type: "note", title: "Геометрический смысл определителя Грама",
+           content: `Определитель Грама системы векторов $v_1, v_2, \\dots, v_k$ равен <b>квадрату $k$-мерного объема</b> параллелепипеда, построенного на этих векторах.`}
+        ]
+      }
+    ]
+  },
+  ch2: {
+    title: "🟡 Задача 2. Отображения, ядро, образ, собственные вектора",
+    color: "#f39c12",
+    sections: [
+      {
+        title: "Отображения и линейные отображения",
+        items: [
+          {num: 14, type: "def", title: "Определение линейного отображения",
+           content: `Пусть $V$ и $W$ – векторные пространства (над одним и тем же числовым полем). Отображение $\\mathcal{A}: V \\to W$ называется <b>линейным</b>, если:
+           <ol>
+             <li>$\\mathcal{A}(v_1 + v_2) = \\mathcal{A}(v_1) + \\mathcal{A}(v_2) \\quad \\forall v_1, v_2 \\in V$ (<b>аддитивность</b>);</li>
+             <li>$\\mathcal{A}(\\lambda \\cdot v) = \\lambda \\cdot \\mathcal{A}(v) \\quad \\forall v \\in V$ и любого числа $\\lambda$ (<b>однородность</b>).</li>
+           </ol>`},
+          {num: 15, type: "def", title: "Определение линейного преобразования",
+           content: `<b>Линейным преобразованием</b> (линейным оператором) векторного пространства $V$ называется линейное отображение $\\mathcal{A}: V \\to V$ <b>пространства $V$ в себя</b>.`},
+          {num: 16, type: "def", title: "Определение образа линейного отображения",
+           content: `<b>Образом</b> линейного отображения $\\mathcal{A}: V \\to W$ называется <b>множество образов $\\mathcal{A}(v)$</b> всех векторов $v$ из $V$. Образ отображения обозначается $\\text{Im} \\mathcal{A}$ или $\\mathcal{A}(V)$.`},
+          {num: 17, type: "def", title: "Определение ядра линейного преобразования (отображения)",
+           content: `<b>Ядром</b> линейного отображения $\\mathcal{A}: V \\to W$ называется множество таких векторов $v \\in V$, что <b>$\\mathcal{A}(v) = o_W$</b>, т.е. множество векторов из $V$, которые <b>отображаются в нулевой вектор</b> пространства $W$. Ядро отображения обозначается: $\\text{Ker} \\mathcal{A} = \\{v \\in V : \\mathcal{A}(v) = o_W\\}$.`},
+          {num: 18, type: "def", title: "Определение дефекта линейного отображения",
+           content: `<b>Дефектом</b> линейного отображения называется <b>размерность его ядра</b>: $d = \\dim(\\text{Ker} \\mathcal{A})$.`},
+          {num: 19, type: "thm", title: "Теорема о размерностях ядра и образа",
+           content: `<b>Сумма размерностей ядра и образа</b> любого линейного отображения $\\mathcal{A}: V \\to W$ равна <b>размерности пространства прообразов</b>:
+           $$ \\dim(\\text{Ker} \\mathcal{A}) + \\dim(\\text{Im} \\mathcal{A}) = \\dim V $$`},
+          {num: 20, type: "def", title: "Определение инъективного отображения",
+           content: `Отображение $f: V \\to W$ называется <b>инъективным</b>, если <b>разным элементам</b> множества $V$ соответствуют <b>разные образы</b>: $v_1 \\neq v_2 \\Rightarrow f(v_1) \\neq f(v_2)$.`},
+          {num: 21, type: "def", title: "Определение сюръективного отображения",
+           content: `Отображение $f: V \\to W$ называется <b>сюръективным</b>, если для каждого элемента из множества $W$ имеется <b>хотя бы один прообраз</b>: $\\forall w \\in W \\ \\exists v \\in V : f(v) = w$.`},
+          {num: 22, type: "def", title: "Определение биективного отображения",
+           content: `Отображение $f: V \\to W$ называется <b>биективным</b> (взаимно однозначным), если оно <b>инъективно и сюръективно одновременно</b>.`},
+          {num: 23, type: "thm", title: "Теорема об обратном отображении",
+           content: `Если линейное отображение $\\mathcal{A}: V \\to W$ обратимое (взаимно однозначное), то <b>обратное отображение $\\mathcal{A}^{-1}: W \\to V$ – линейное</b>.`},
+          {num: 24, type: "thm", title: "Необходимое и достаточное условие обратимости отображения",
+           content: `Линейное отображение $\\mathcal{A}: V \\to W$ биективно (значит, обратимо) тогда и только тогда, когда <b>$\\text{Ker} \\mathcal{A} = \\{o_V\\}$</b> и <b>$\\text{Im} \\mathcal{A} = W$</b> одновременно.
+           <p><i>(Альтернативная формулировка: ... тогда и только тогда, когда <b>обратима его матрица</b>).</i></p>`},
+          {num: 25, type: "def", title: "Определение композиции отображений",
+           content: `<b>Композицией</b> отображений $g: U \\to V$ и $f: V \\to W$ называется отображение $f \\circ g: U \\to W$, определяемое равенством <b>$(f \\circ g)(u) = f(g(u))$</b>.`}
+        ]
+      }
+    ]
+  },
+  ch3: {
+    title: "🟠 Задача 3. Жорданова форма, многочлены от матриц, Квадратичные формы",
+    color: "#e67e22",
+    sections: [
+      {
+        title: "Линейные преобразования и спектральная теория",
+        items: [
+          {num: 26, type: "def", title: "Определение характеристического многочлена матрицы",
+           content: `<b>Характеристическим многочленом</b> преобразования $\\mathcal{A}$ (матрицы $A$) называется многочлен <b>$\\Delta_{\\mathcal{A}}(\\lambda) = \\det(A - \\lambda E)$</b>.`},
+          {num: 27, type: "def", title: "Определение собственного вектора линейного преобразования",
+           content: `Ненулевой вектор $s$ векторного пространства $V$, удовлетворяющий условию <b>$\\mathcal{A}(s) = \\lambda s$</b>, называется <b>собственным вектором</b> линейного преобразования $\\mathcal{A}$. Число $\\lambda$ в равенстве называется <b>собственным значением</b> преобразования $\\mathcal{A}$.`},
+          {num: 28, type: "note", title: "Геометрический смысл собственных векторов",
+           content: `<ol>
+             <li>Ненулевой вектор $s$ является собственным для преобразования $\\mathcal{A}$, если его образ $\\mathcal{A}(s)$ <b>коллинеарен прообразу</b> $s$.</li>
+             <li>Если $s$ – собственный вектор, то преобразование $\\mathcal{A}$ имеет <b>одномерное инвариантное подпространство</b> $Lin(s)$, и наоборот.</li>
+           </ol>`},
+          {num: 29, type: "def", title: "Определение инвариантного подпространства",
+           content: `Пусть $\\mathcal{A}: V \\to V$ – линейное преобразование векторного пространства $V$. Векторное подпространство $L \\subset V$ называется <b>инвариантным</b> относительно преобразования $\\mathcal{A}$, если образ любого вектора из $L$ принадлежит подпространству $L$, т.е. <b>$\\mathcal{A}(v) \\in L \\quad \\forall v \\in L$</b>. Другими словами, инвариантное подпространство $L$ включает свой образ: <b>$\\mathcal{A}(L) \\subseteq L$</b>.`},
+          {num: 30, type: "thm", title: "Теорема о диагонализируемости матрицы линейного преобразования",
+           content: `Для того чтобы линейное преобразование приводилось к диагональному виду, необходимо и достаточно, чтобы все корни характеристического многочлена являлись собственными значениями преобразования и <b>геометрическая кратность</b> каждого собственного значения была <b>равна его алгебраической кратности</b>.`},
+          {num: 31, type: "thm", title: "Теорема о приведении линейного преобразования к каноническому виду",
+           content: `Если все корни характеристического уравнения являются собственными значениями преобразования, то это преобразование приводится к каноническому виду, т.е. <b>существует базис</b> пространства, в котором матрица преобразования имеет <b>жорданову форму</b>.`},
+          {num: 32, type: "def", title: "Определение присоединенного вектора 1-го порядка",
+           content: `Пусть преобразование $\\mathcal{A}: V \\to V$ имеет собственный вектор $s$, соответствующий собственному значению $\\lambda$. Вектор $s^{(1)}$, удовлетворяющий условию <b>$\\mathcal{A}(s^{(1)}) = \\lambda s^{(1)} + s$</b>, называется <b>присоединенным вектором 1-го порядка</b>.`},
+          {num: 33, type: "def", title: "Определение геометрической кратности собственного значения",
+           content: `<b>Геометрической кратностью</b> собственного значения $\\lambda_1$ линейного преобразования $\\mathcal{A}: V \\to V$ называется <b>размерность собственного подпространства</b> $K = \\text{Ker}(\\mathcal{A} - \\lambda_1 E)$, соответствующего этому собственному значению.`},
+          {num: 34, type: "def", title: "Определение аннулирующего многочлена матрицы",
+           content: `Многочлен $p(\\lambda)$ называется <b>аннулирующим</b> для квадратной матрицы $A$, если <b>$p(A) = O$</b> – нулевая матрица.`},
+          {num: 35, type: "def", title: "Определение аннулирующего многочлена линейного преобразования",
+           content: `Многочлен $p(\\lambda)$ называется <b>аннулирующим</b> для линейного преобразования $\\mathcal{A}$, если <b>$p(\\mathcal{A}) = \\mathcal{O}$</b> – нулевое преобразование.`},
+          {num: 36, type: "thm", title: "Теорема Гамильтона – Кэли",
+           content: `<b>Характеристический многочлен</b> матрицы является <b>аннулирующим</b> для нее, т.е. $\\Delta_A(A) = O$.`}
+        ]
+      },
+      {
+        title: "Квадратичные формы",
+        items: [
+          {num: 37, type: "def", title: "Определение канонического вида квадратичной формы",
+           content: `Квадратичная форма приведена к <b>каноническому виду</b>, если она содержит <b>только квадраты переменных</b>: $q(y) = \\lambda_1 y_1^2 + \\lambda_2 y_2^2 + \\dots + \\lambda_n y_n^2$.`},
+          {num: 38, type: "def", title: "Определение нормального вида квадратичной формы",
+           content: `Квадратичная форма приведена к <b>нормальному виду</b>, если коэффициенты при квадратах переменных <b>равны $+1$ или $-1$</b>: $q(y) = y_1^2 + \\dots + y_k^2 - y_{k+1}^2 - \\dots - y_n^2$.`},
+          {num: 39, type: "thm", title: "Теорема о приведении квадратичной формы к главным осям",
+           content: `Вещественная квадратичная форма при помощи <b>ортогонального преобразования</b> переменных $x = Sy$ может быть приведена к каноническому виду, где $\\lambda_1, \\dots, \\lambda_n$ – <b>собственные значения матрицы $A$</b>.`},
+          {num: 40, type: "thm", title: "Теорема о приведении пары квадратичных форм к каноническому виду",
+           content: `Пусть задана пара квадратичных форм $f(x) = x^T A x$ и $g(x) = x^T B x$, причем форма $g(x)$ <b>положительно (отрицательно) определенная</b>. Тогда существует невырожденная замена $x = Sy$ переменных, которая <b>одновременно</b> приводит форму $f(x)$ к каноническому виду, а форму $g(x)$ к нормальному виду.`}
+        ]
+      }
+    ]
+  },
+  ch4: {
+    title: "🔴 Задача 4. Преобразования в евклидовом пространстве",
+    color: "#e74c3c",
+    sections: [
+      {
+        title: "Преобразования в евклидовом пространстве",
+        items: [
+          {num: 41, type: "def", title: "Определение ортогонального преобразования",
+           content: `Преобразование $\\mathcal{A}: E \\to E$ $n$-мерного евклидова пространства $E$ называется <b>ортогональным</b>, если оно <b>сохраняет скалярное произведение</b> векторов, т.е. $(\\mathcal{A}(v), \\mathcal{A}(w)) = (v, w) \\quad \\forall v, w \\in E$.`},
+          {num: 42, type: "thm", title: "Теорема о каноническом виде ортогонального преобразования",
+           content: `Для каждого ортогонального преобразования $\\mathcal{A}: E \\to E$ $n$-мерного евклидова пространства $E$ существует ортонормированный базис, в котором матрица преобразования имеет <b>канонический вид</b>:
+           <p>На главной диагонали матрицы стоят либо числа <b>$1$ или $(-1)$</b>, либо <b>блоки вида $R(\\varphi) = \\begin{pmatrix} \\cos\\varphi & -\\sin\\varphi \\\\ \\sin\\varphi & \\cos\\varphi \\end{pmatrix}$</b>, а остальные элементы матрицы равны нулю.</p>`},
+          {num: 43, type: "def", title: "Определение ортогональной матрицы",
+           content: `Матрица $S$ называется <b>ортогональной</b>, если <b>$S^T S = E$</b> (или $S^T = S^{-1}$).`},
+          {num: 44, type: "def", title: "Определение собственного ортогонального преобразования",
+           content: `Ортогональное преобразование $\\mathcal{A}$ называется <b>собственным</b>, если <b>$\\det \\mathcal{A} = 1$</b>, и <b>несобственным</b>, если <b>$\\det \\mathcal{A} = -1$</b>.`},
+          {num: 45, type: "def", title: "Определение сопряженного преобразования",
+           content: `Пусть $\\mathcal{A}: E \\to E$ – линейное преобразование $n$-мерного евклидова пространства $E$. Преобразование $\\mathcal{A}^*: E \\to E$ называется <b>сопряженным</b> преобразованию $\\mathcal{A}$, если для любых векторов $x$ и $y$ из пространства $E$ выполняется равенство <b>$(\\mathcal{A}(x), y) = (x, \\mathcal{A}^*(y))$</b>.`},
+          {num: 46, type: "note", title: "Связь матриц данного и сопряженного преобразований",
+           content: `<ul>
+             <li>Матрица сопряженного преобразования в любом ортонормированном базисе является <b>транспонированной</b> по отношению к матрице данного преобразования в том же базисе (<b>$A^* = A^T$</b>).</li>
+             <li>Матрица $A^*$ сопряженного преобразования в произвольном (неортонормированном) базисе связана с матрицей $A$ преобразования следующей формулой: <b>$A^* = G^{-1} A^T G$</b>, где $G$ – матрица Грама данного базиса.</li>
+           </ul>`},
+          {num: 47, type: "note", title: "Свойство собственных значений данного и сопряженного преобразований",
+           content: `Собственные значения сопряженного преобразования $\\mathcal{A}^*$ <b>совпадают</b> с собственными значениями $\\mathcal{A}$ преобразования.`},
+          {num: 48, type: "thm", title: "Теорема о собственных значениях самосопряженного преобразования",
+           content: `Все корни характеристического уравнения самосопряженного преобразования <b>действительные</b>.`},
+          {num: 49, type: "def", title: "Определение самосопряженного преобразования",
+           content: `Линейное преобразование $\\mathcal{A}: E \\to E$ $n$-мерного евклидова пространства $E$ называется <b>самосопряженным</b>, если оно является сопряженным самому себе, а именно <b>$\\mathcal{A}^* = \\mathcal{A}$</b>, т.е. $(\\mathcal{A}(x), y) = (x, \\mathcal{A}(y))$ для любых векторов $x$ и $y$ из пространства $E$.`},
+          {num: 50, type: "thm", title: "Теорема о диагонализируемости самосопряженного преобразования",
+           content: `Для всякого самосопряженного преобразования $\\mathcal{A}: E \\to E$ $n$-мерного евклидова пространства $E$ существует <b>ортонормированный базис</b> (из собственных векторов), в котором матрица преобразования имеет <b>диагональный вид</b> $\\Lambda = \\text{diag}(\\lambda_1, \\dots, \\lambda_n)$.`},
+          {num: 51, type: "note", title: "Геометрический смысл самосопряженного преобразования",
+           content: `Любое самосопряженное преобразование можно представить как композицию преобразований, каждое из которых есть либо простое <b>отражение</b> (относительно гиперплоскости), либо <b>проекция</b> на гиперплоскость, либо <b>растяжение</b> вдоль взаимно перпендикулярных направлений.`},
+          {num: 52, type: "thm", title: "Теорема о полярном разложении невырожденного линейного преобразования",
+           content: `Любое невырожденное линейное преобразование $\\mathcal{A}: E \\to E$ $n$-мерного евклидова пространства $E$ можно представить в виде композиции <b>$\\mathcal{A} = S \\mathcal{Q}$</b> <b>положительного самосопряженного</b> преобразования $S$ и <b>ортогонального</b> преобразования $\\mathcal{Q}$, причем такое представление <b>единственное</b>.`}
+        ]
+      }
+    ]
+  }
+};
+
+// ===== УТИЛИТЫ =====
+const typeIcons = { def: "📘", thm: "📗", note: "📙" };
+const typeNames = { def: "Определение", thm: "Теорема", note: "Замечание" };
+const chNames = { ch1: "🟢 Задача 1", ch2: "🟡 Задача 2", ch3: "🟠 Задача 3", ch4: "🔴 Задача 4" };
+const chColors = { ch1: "#27ae60", ch2: "#f39c12", ch3: "#e67e22", ch4: "#e74c3c" };
+
+function getAllQuestions(chKey) {
+  const ch = questions[chKey];
+  const result = [];
+  ch.sections.forEach(sec => {
+    sec.items.forEach(item => {
+      result.push({ ...item, chKey, chTitle: ch.title, sectionTitle: sec.title });
+    });
+  });
+  return result;
+}
+
+function renderCallout(q, showAnswer = true) {
+  const icon = typeIcons[q.type];
+  return `
+    <div class="callout ${q.type}">
+      <div class="callout-title">${icon} ${q.num}. ${q.title}</div>
+      <div class="content ${showAnswer ? 'answer-visible' : 'answer-hidden'}">${q.content}</div>
+    </div>
+  `;
+}
+
+function renderChapter(chKey) {
+  const ch = questions[chKey];
+  let html = `<h1>${ch.title}</h1>`;
+  ch.sections.forEach(sec => {
+    html += `<h2>${sec.title}</h2>`;
+    sec.items.forEach(item => {
+      html += renderCallout(item, true);
+    });
+  });
+  return html;
+}
+
+// ===== НАВИГАЦИЯ =====
+function showPage(pageId) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById(pageId).classList.add('active');
+  document.querySelectorAll('.nav a').forEach(a => {
+    a.classList.toggle('active', a.dataset.page === pageId);
+  });
+  window.scrollTo(0, 0);
+  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
+  }
+}
+
+document.querySelectorAll('[data-page]').forEach(el => {
+  el.addEventListener('click', e => {
+    e.preventDefault();
+    showPage(el.dataset.page);
+  });
+});
+
+// ===== РЕНДЕРИНГ ГЛАВ =====
+document.getElementById('ch1-content').innerHTML = renderChapter('ch1');
+document.getElementById('ch2-content').innerHTML = renderChapter('ch2');
+document.getElementById('ch3-content').innerHTML = renderChapter('ch3');
+document.getElementById('ch4-content').innerHTML = renderChapter('ch4');
+
+// ===== РЕЖИМ ТЕСТА =====
+let currentTicket = null;
+let ticketFixed = false;
+
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generateTicket() {
+  if (ticketFixed) {
+    if (!confirm("Билет зафиксирован. Сгенерировать новый?")) return;
+  }
+  currentTicket = {
+    id: Date.now(),
+    date: new Date().toISOString(),
+    questions: [
+      pickRandom(getAllQuestions('ch1')),
+      pickRandom(getAllQuestions('ch2')),
+      pickRandom(getAllQuestions('ch3')),
+      pickRandom(getAllQuestions('ch4'))
+    ],
+    fixed: false,
+    answersVisible: false
+  };
+  ticketFixed = false;
+  renderTicket();
+}
+
+function renderTicket() {
+  if (!currentTicket) {
+    document.getElementById('ticket-content').innerHTML = '';
+    document.getElementById('ticket-info').innerHTML = 'Нажмите «Новый билет», чтобы сгенерировать первый билет.';
+    document.getElementById('ticket-info').classList.remove('fixed');
+    return;
+  }
+  
+  const infoEl = document.getElementById('ticket-info');
+  const date = new Date(currentTicket.date);
+  const dateStr = date.toLocaleString('ru-RU');
+  const badge = currentTicket.fixed 
+    ? '<span class="ticket-badge badge-fixed">📌 Зафиксирован</span>' 
+    : '<span class="ticket-badge badge-temp">⏳ Временный</span>';
+  infoEl.innerHTML = `<strong>Билет от ${dateStr}</strong> ${badge}<br>Вопросы: ${currentTicket.questions.map(q => `№${q.num}`).join(', ')}`;
+  infoEl.classList.toggle('fixed', currentTicket.fixed);
+  
+  const contentEl = document.getElementById('ticket-content');
+  let html = '';
+  currentTicket.questions.forEach((q, idx) => {
+    html += `<h2 style="border-color: ${chColors[q.chKey]}">${chNames[q.chKey]} — Вопрос №${q.num}</h2>`;
+    html += renderCallout(q, currentTicket.answersVisible);
+  });
+  contentEl.innerHTML = html;
+  
+  document.getElementById('btn-toggle').textContent = currentTicket.answersVisible ? '🙈 Скрыть ответы' : '👁️ Показать ответы';
+  document.getElementById('btn-fix').textContent = currentTicket.fixed ? '📌 Зафиксирован ✓' : '📌 Зафиксировать';
+  document.getElementById('btn-fix').disabled = currentTicket.fixed;
+  
+  if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+    MathJax.typesetPromise();
+  }
+}
+
+function toggleAnswers() {
+  if (!currentTicket) return;
+  currentTicket.answersVisible = !currentTicket.answersVisible;
+  renderTicket();
+}
+
+function fixTicket() {
+  if (!currentTicket || currentTicket.fixed) return;
+  currentTicket.fixed = true;
+  ticketFixed = true;
+  saveToHistory(currentTicket);
+  renderTicket();
+}
+
+function shuffleTicket() {
+  if (!currentTicket) return;
+  for (let i = currentTicket.questions.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [currentTicket.questions[i], currentTicket.questions[j]] = [currentTicket.questions[j], currentTicket.questions[i]];
+  }
+  renderTicket();
+}
+
+document.getElementById('btn-new').addEventListener('click', generateTicket);
+document.getElementById('btn-toggle').addEventListener('click', toggleAnswers);
+document.getElementById('btn-fix').addEventListener('click', fixTicket);
+document.getElementById('btn-shuffle').addEventListener('click', shuffleTicket);
+
+// ===== ИСТОРИЯ =====
+const HISTORY_KEY = 'linalgebra_history';
+
+function loadHistory() {
+  try {
+    return JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
+  } catch(e) { return []; }
+}
+
+function saveToHistory(ticket) {
+  const history = loadHistory();
+  history.unshift(ticket);
+  if (history.length > 50) history.pop();
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+}
+
+function clearHistory() {
+  if (!confirm("Очистить всю историю билетов?")) return;
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistory();
+}
+
+function renderHistory() {
+  const history = loadHistory();
+  const container = document.getElementById('history-list');
+  
+  if (history.length === 0) {
+    container.innerHTML = '<div class="empty-history">📭 История пуста. Зафиксируйте билет в режиме теста, чтобы он появился здесь.</div>';
+    return;
+  }
+  
+  let html = '<div class="history-list">';
+  history.forEach((ticket, idx) => {
+    const date = new Date(ticket.date);
+    const dateStr = date.toLocaleString('ru-RU');
+    html += `
+      <div class="history-item">
+        <div class="history-item-header">
+          <strong>Билет №${history.length - idx}</strong>
+          <span class="history-date">${dateStr}</span>
+        </div>
+        <div class="history-questions">
+          ${ticket.questions.map(q => `
+            <div class="history-q">
+              <span class="q-ch" style="background: ${chColors[q.chKey]}"></span>
+              <b>№${q.num}</b> — ${q.title}
+            </div>
+          `).join('')}
+        </div>
+        <div style="margin-top: 0.8rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="loadTicket(${idx})" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">📂 Открыть</button>
+          <button class="btn btn-danger" onclick="deleteTicket(${idx})" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;">🗑️ Удалить</button>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+
+window.loadTicket = function(idx) {
+  const history = loadHistory();
+  currentTicket = JSON.parse(JSON.stringify(history[idx]));
+  currentTicket.answersVisible = false;
+  ticketFixed = currentTicket.fixed;
+  showPage('test');
+  renderTicket();
+};
+
+window.deleteTicket = function(idx) {
+  if (!confirm("Удалить этот билет из истории?")) return;
+  const history = loadHistory();
+  history.splice(idx, 1);
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+  renderHistory();
+};
+
+document.getElementById('btn-clear-history').addEventListener('click', clearHistory);
+
+// ===== ИНИЦИАЛИЗАЦИЯ =====
+renderHistory();
+showPage('home');
+</script>
+
+</body>
+</html>
